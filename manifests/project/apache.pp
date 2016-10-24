@@ -95,7 +95,7 @@ define projects::project::apache (
   }
 
   sudo::conf { "${title}-apache":
-    content => "%${title} ALL= (ALL) NOPASSWD: /sbin/apachectl"
+    content => "%${title} ALL= (ALL) /sbin/apachectl"
   }
 
   create_resources('::projects::project::apache::vhost', $vhosts, {
