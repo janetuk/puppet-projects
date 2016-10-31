@@ -66,7 +66,7 @@ define projects::project (
       ensure => directory,
       owner  => $uid,
       group  => $gid,
-      seltype => 'httpd_sys_content_t',
+      seltype => 'httpd_sys_rw_content_t',
       mode   => '0775',
     }
 
