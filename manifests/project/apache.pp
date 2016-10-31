@@ -148,6 +148,24 @@ define projects::project::apache::vhost (
     require => File["${::projects::basedir}/${projectname}/etc/apache/conf.d"],
   }
 
+  selboolean { 'SELinux httpd_can_network_connect_db':
+    name       => 'httpd_can_network_connect_db',
+    persistent => true,
+    value      => 'on',
+  }
+
+  selboolean { 'SELinux':
+    name       => 'httpd_can_network_connect',
+    persistent => true,
+    value      => 'on',
+  }
+
+  selboolean { 'SELinux httpd_can_sendmail':
+    name       => 'httpd_can_sendmail',
+    persistent => true,
+    value      => 'on',
+  }
+
   ::apache::vhost { $title:
     servername          => $vhost_name,
     port                => $port,
