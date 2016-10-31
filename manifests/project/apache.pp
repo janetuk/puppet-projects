@@ -17,6 +17,7 @@ define projects::project::apache (
     include ::apache::mod::proxy_http
     include ::apache::mod::proxy_ajp
     include ::apache::mod::headers
+    include ::apache::mod::wsgi
     class {'::apache::mod::authnz_ldap':
       verifyServerCert => false
     }
@@ -172,6 +173,7 @@ define projects::project::apache::vhost (
     ssl                 => $ssl,
     docroot             => "${::projects::basedir}/${projectname}/var/${docroot}",
     logroot             => "${::projects::basedir}/${projectname}/var/log/httpd",
+    use_optional_includes => "true",
     additional_includes =>
       ["${::projects::basedir}/${projectname}/etc/apache/conf.d/*.conf",
       "${::projects::basedir}/${projectname}/etc/apache/conf.d/${title}/*.conf"],
