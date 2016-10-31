@@ -51,6 +51,14 @@ define projects::project (
       seltype  => 'ssh_home_t',
     }
 
+    file { "$::projects::basedir/$title/.settings":
+      ensure   => 'directory',
+      owner  => $uid,
+      group  => $gid,
+      mode     => '775',
+      seltype  => 'httpd_sys_content_t',
+    }
+
     file { [
            "$::projects::basedir/$title/etc",
            ] :
