@@ -26,6 +26,9 @@ define projects::project::apache (
 
     if defined(Class['::selinux']) {
       ensure_resource('selinux::boolean', 'httpd_can_connect_ldap', {'ensure' =>  'on'})
+      ensure_resource('selinux::boolean', 'httpd_can_network_connect_db', {'ensure' =>  'on'})
+      ensure_resource('selinux::boolean', 'httpd_can_network_connect', {'ensure' =>  'on'})
+      ensure_resource('selinux::boolean', 'httpd_can_sendmail', {'ensure' =>  'on'})
     }
 
 
@@ -147,21 +150,6 @@ define projects::project::apache::vhost (
     mode     => '2775',
     seltype => 'httpd_config_t',
     require => File["${::projects::basedir}/${projectname}/etc/apache/conf.d"],
-  }
-
-  selboolean { 'httpd_can_network_connect_db':
-    persistent => true,
-    value      => 'on',
-  }
-
-  selboolean { 'httpd_can_network_connect':
-    persistent => true,
-    value      => 'on',
-  }
-
-  selboolean { 'httpd_can_sendmail':
-    persistent => true,
-    value      => 'on',
   }
 
   ::apache::vhost { $title:
