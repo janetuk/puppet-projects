@@ -10,7 +10,8 @@ define projects::project::apache (
     ensure_resource('class', '::apache', {
       default_vhost         => true,
       use_optional_includes => true,
-      mpm_module            => false
+      mpm_module            => false,
+      service_ensure        => running,
     })
     include ::apache::mod::proxy
     include ::apache::mod::alias
