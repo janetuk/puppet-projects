@@ -12,6 +12,7 @@ define projects::project::apache (
       use_optional_includes => true,
       mpm_module            => false,
       service_ensure        => running,
+      service_enable        => true,
     })
     include ::apache::mod::proxy
     include ::apache::mod::alias
