@@ -218,6 +218,7 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
     ssl_pkey { "${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key" :
       ensure   => present,
       require  => File["${::projects::basedir}/${projectname}/etc/ssl/private"],
+      before   => Service[httpd],
     }
 
     x509_request { "${::projects::basedir}/${projectname}/etc/ssl/csrs/${vhost_name}.auto.csr" :
@@ -225,6 +226,7 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
       template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf",
       private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key",
       require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
+      before   => Service[httpd],
     }
 
     x509_cert { "${::projects::basedir}/${projectname}/etc/ssl/certs/${vhost_name}.auto.crt":
@@ -233,30 +235,35 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
       private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key",
       days        => 4536,
       require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
+      before   => Service[httpd],
     }
 
     exec { "deploy ${vhost_name}.key" :
       command => "/bin/cp ${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key ${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.key",
       onlyif  => "/bin/test ! -f ${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.key",
       require => Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.auto.key"],
+      before   => Service[httpd],
     }
 
     file { "${::projects::basedir}/${projectname}/etc/ssl/private/${vhost_name}.key":
       replace => 'no',
       seltype => 'cert_t',
       require => Exec["deploy ${vhost_name}.key"],
+      before   => Service[httpd],
     }
 
     exec { "deploy ${vhost_name}.crt" :
       command => "/bin/cp ${::projects::basedir}/${projectname}/etc/ssl/certs/${vhost_name}.auto.crt ${::projects::basedir}/${projectname}/etc/ssl/certs/${vhost_name}.crt",
       onlyif  => "/bin/test ! -f ${::projects::basedir}/${projectname}/etc/ssl/certs/${vhost_name}.crt",
       require => X509_cert["${::projects::basedir}/${projectname}/etc/ssl/certs/${vhost_name}.auto.crt"],
+      before   => Service[httpd],
     }
 
     file { "${::projects::basedir}/${projectname}/etc/ssl/certs/${vhost_name}.crt": 
       replace => 'no',
       seltype => 'cert_t',
       require => Exec["deploy ${vhost_name}.crt"],
+      before   => Service[httpd],
     }
   }
 
