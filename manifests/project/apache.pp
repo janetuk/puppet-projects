@@ -210,7 +210,7 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
     if (hiera('projects::ssl::email','') != '') {
       $email = hiera('projects::ssl::email',nil)
     }
-    file {"${::projects::basedir}/${projectname}/etc/ssl/conf/${cert_name}.cnf":
+    file {"${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf":
       content => template('openssl/cert.cnf.erb'),
       require  => File["${::projects::basedir}/${projectname}/etc/ssl/conf"],
 
@@ -224,9 +224,9 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
 
     x509_request { "${::projects::basedir}/${projectname}/etc/ssl/csrs/${cert_name}.auto.csr" :
       ensure      => present,
-      template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${cert_name}.cnf",
+      template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf",
       private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key",
-      require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${cert_name}.cnf"]],
+      require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
       before   => Service[httpd],
     }
 
