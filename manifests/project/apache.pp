@@ -194,80 +194,88 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
     }
   }
 
-  if $ssl == true {
-    $country= hiera('projects::ssl::country','GB')
-    if (hiera('projects::ssl::state','') != '') {
-      $state = hiera('projects::ssl::state')
-    }
-    if (hiera('projects::ssl::locality','') != '') {
-      $locality = hiera('projects::ssl::locality')
-    }
-    $organization = hiera('projects::ssl::organization','ACME')
-    if (hiera('projects::ssl::unit','') != '') {
-      $unit = hiera('projects::ssl::unit',nil)
-    }
-    $commonname = $cert_name
-    if (hiera('projects::ssl::email','') != '') {
-      $email = hiera('projects::ssl::email',nil)
-    }
-    file {"${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf":
-      content => template('openssl/cert.cnf.erb'),
-      require  => File["${::projects::basedir}/${projectname}/etc/ssl/conf"],
+  if !defined(File["${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt"]) {
+      if $ssl == true {
+	$country= hiera('projects::ssl::country','GB')
+	if (hiera('projects::ssl::state','') != '') {
+	  $state = hiera('projects::ssl::state')
+	}
+	if (hiera('projects::ssl::locality','') != '') {
+	  $locality = hiera('projects::ssl::locality')
+	}
+	$organization = hiera('projects::ssl::organization','ACME')
+	if (hiera('projects::ssl::unit','') != '') {
+	  $unit = hiera('projects::ssl::unit',nil)
+	}
+	$commonname = $cert_name
+	if (hiera('projects::ssl::email','') != '') {
+	  $email = hiera('projects::ssl::email',nil)
+	}
+	file {"${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf":
+	  content => template('openssl/cert.cnf.erb'),
+	  require  => File["${::projects::basedir}/${projectname}/etc/ssl/conf"],
 
-    }
+	}
 
-    ssl_pkey { "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key" :
-      ensure   => present,
-      require  => File["${::projects::basedir}/${projectname}/etc/ssl/private"],
-      before   => Service[httpd],
-    }
+	ssl_pkey { "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key" :
+	  ensure   => present,
+	  require  => File["${::projects::basedir}/${projectname}/etc/ssl/private"],
+	  before   => Service[httpd],
+	}
 
-    x509_request { "${::projects::basedir}/${projectname}/etc/ssl/csrs/${cert_name}.auto.csr" :
-      ensure      => present,
-      template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf",
-      private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key",
-      require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
-      before   => Service[httpd],
-    }
+	x509_request { "${::projects::basedir}/${projectname}/etc/ssl/csrs/${cert_name}.auto.csr" :
+	  ensure      => present,
+	  template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf",
+	  private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key",
+	  require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
+	  before   => Service[httpd],
+	}
 
-    x509_cert { "${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.auto.crt":
-      ensure      => present,
-      template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf",
-      private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key",
-      days        => 4536,
-      require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
-      before   => Service[httpd],
-    }
+	x509_cert { "${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.auto.crt":
+	  ensure      => present,
+	  template    => "${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf",
+	  private_key => "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key",
+	  days        => 4536,
+	  require => [Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],File["${::projects::basedir}/${projectname}/etc/ssl/conf/${vhost_name}.cnf"]],
+	  before   => Service[httpd],
+	}
 
-    exec { "deploy ${cert_name}.key" :
-      command => "/bin/cp ${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key ${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key",
-      onlyif  => "/bin/test ! -f ${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key",
-      require => Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],
-      before   => Service[httpd],
-    }
+	exec { "deploy ${cert_name}.key" :
+	  command => "/bin/cp ${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key ${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key",
+	  onlyif  => "/bin/test ! -f ${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key",
+	  require => Ssl_pkey["${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.auto.key"],
+	  before   => Service[httpd],
+	}
 
-    file { "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key":
-      replace => 'no',
-      seltype => 'cert_t',
-      require => Exec["deploy ${cert_name}.key"],
-      before   => Service[httpd],
-    }
+	file { "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key":
+	  replace => 'no',
+	  seltype => 'cert_t',
+	  require => Exec["deploy ${cert_name}.key"],
+	  before   => Service[httpd],
+	}
 
-    exec { "deploy ${cert_name}.crt" :
-      command => "/bin/cp ${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.auto.crt ${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
-      onlyif  => "/bin/test ! -f ${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
-      require => X509_cert["${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.auto.crt"],
-      before   => Service[httpd],
-    }
+	exec { "deploy ${cert_name}.crt" :
+	  command => "/bin/cp ${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.auto.crt ${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
+	  onlyif  => "/bin/test ! -f ${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
+	  require => X509_cert["${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.auto.crt"],
+	  before   => Service[httpd],
+	}
 
-    file { "${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt": 
-      replace => 'no',
-      seltype => 'cert_t',
-      require => Exec["deploy ${cert_name}.crt"],
-      before   => Service[httpd],
-    }
+	file { "${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt": 
+	  replace => 'no',
+	  seltype => 'cert_t',
+	  require => Exec["deploy ${cert_name}.crt"],
+	  before   => Service[httpd],
+	}
+      }
   }
 
+  ensure_resource('file', [
+	"${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
+	"${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key"
+    ],
+    { seltype => 'cert_t' }
+  )
 
   if !defined(Firewall["050 accept Apache ${port}"]) {
     firewall { "050 accept Apache ${port}":
