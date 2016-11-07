@@ -63,11 +63,6 @@ define projects::project::apache (
     require => File["${::projects::basedir}/${title}/var/log"],
   }
 
-  file { "/etc/logrotate.d/httpd-$title":
-    ensure  => present,
-    content => template('projects/apache/logrotate.erb'),
-  }
-
   file { "${::projects::basedir}/${title}/etc/apache":
     ensure  => directory,
     owner   => $title,
