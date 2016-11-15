@@ -85,7 +85,7 @@ define projects::project (
       owner  => $uid,
       group  => $gid,
       mode   => '0775',
-      seltype => 'httpd_sys_rw_content_t',
+      seltype => 'httpd_sys_content_t',
     }
 
     file { "$::projects::basedir/$title/var/log":
