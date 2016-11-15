@@ -162,6 +162,8 @@ define projects::project::apache::vhost (
       "${::projects::basedir}/${projectname}/etc/apache/conf.d/${title}/*.conf"],
     ssl_cert            =>
       "${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
+    ssl_chain           =>
+      "${::projects::basedir}/${projectname}/etc/ssl/certs/${cert_name}.crt",
     ssl_key             =>
       "${::projects::basedir}/${projectname}/etc/ssl/private/${cert_name}.key",
     serveraliases       => $altnames,
