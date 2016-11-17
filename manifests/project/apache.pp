@@ -13,6 +13,8 @@ define projects::project::apache (
       mpm_module            => false,
       service_ensure        => running,
       service_enable        => true,
+      server_signature    => 'Off',
+      server_tokens       => 'Prod',
     })
     include ::apache::mod::proxy
     include ::apache::mod::alias
@@ -174,8 +176,6 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
     ip                  => $ip,
     ip_based            => $ip_based,
     add_listen          => false,
-    server_signature    => 'Off',
-    server_tokens       => 'Prod',
     headers             => 'Set Strict-Transport-Security "max-age=63072000; includeSubdomains;"',
   }
 
