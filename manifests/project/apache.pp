@@ -26,6 +26,10 @@ define projects::project::apache (
 
     include ::apache::mod::status
 
+    class { '::apache::mod::ssl':
+      ssl_cipher => 'HIGH:!aNULL:!MD5',
+    }
+
     if defined(Class['::selinux']) {
       ensure_resource('selinux::boolean', 'httpd_can_connect_ldap', {'ensure' =>  'on'})
       ensure_resource('selinux::boolean', 'httpd_can_network_connect_db', {'ensure' =>  'on'})
