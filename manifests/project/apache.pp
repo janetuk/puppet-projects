@@ -13,8 +13,8 @@ define projects::project::apache (
       mpm_module            => false,
       service_ensure        => running,
       service_enable        => true,
-      server_signature    => 'Off',
-      server_tokens       => 'Prod',
+      server_signature      => 'Off',
+      server_tokens         => 'Prod',
     })
     include ::apache::mod::proxy
     include ::apache::mod::alias
