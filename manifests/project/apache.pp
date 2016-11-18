@@ -33,6 +33,7 @@ define projects::project::apache (
       ensure_resource('selinux::boolean', 'httpd_can_network_connect_db', {'ensure' =>  'on'})
       ensure_resource('selinux::boolean', 'httpd_can_network_connect', {'ensure' =>  'on'})
       ensure_resource('selinux::boolean', 'httpd_can_sendmail', {'ensure' =>  'on'})
+      ensure_resource('selinux::boolean', 'httpd_can_network_memcache', {'ensure' =>  'on'})
     }
 
 
