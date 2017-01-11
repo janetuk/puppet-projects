@@ -14,14 +14,15 @@
 #
 class projects (
   $basedir = '/srv/projects',
-  $symlink = []
+  $symlink = [],
+  $projects = {},
 ) inherits ::projects::params {
 
   file { $basedir:
     ensure => directory,
     mode   => '0775',
     owner  => root,
-    group  => root
+    group  => root,
   }
 
   file { $symlink:
@@ -30,9 +31,5 @@ class projects (
   }
 
   $projects = hiera_hash('projects',{})
-  create_resources('projects::project', $projects)
-
-
+  create_resources('projects::project', $projects::projects)
 }
-
-
