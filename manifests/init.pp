@@ -30,6 +30,5 @@ class projects (
     target => $basedir,
   }
 
-  $projects = hiera_hash('projects',{})
-  create_resources('projects::project', $projects::projects)
+  create_resources('projects::project', $projects)
 }
