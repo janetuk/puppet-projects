@@ -204,7 +204,7 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
 
   if !defined(Firewall["050 accept Apache ${port}"]) {
     firewall { "050 accept Apache ${port}":
-      port   => $port,
+      dport   => $port,
       proto  => tcp,
       action => accept,
     }
