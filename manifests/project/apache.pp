@@ -28,8 +28,17 @@ define projects::project::apache (
 
     if $use_python3_wsgi {
       package { 'mod_wsgi':
-        ensure => installed,
+        ensure => '4.5.14',
         provider => 'pip3',
+        require => Package['httpd', 'httpd-devel'],
+      }
+      file { '/etc/httpd/conf.modules.d/wsgi3.load':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        source  => 'puppet:///modules/projects/apache/wsgi3.conf',
+        require => Package['httpd'],
       }
     } else {
       include ::apache::mod::wsgi
