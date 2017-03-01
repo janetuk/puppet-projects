@@ -2,9 +2,10 @@
 #
 # Defines an apache project
 define projects::project::apache (
-  $vhosts        = {},
-  $apache_user   = 'apache',
-  $apache_common = {},
+  $vhosts           = {},
+  $apache_user      = 'apache',
+  $apache_common    = {},
+  $use_python3_wsgi = false;
 ) {
   if !defined(Class['::apache']) {
     ensure_resource('class', '::apache', {
@@ -21,9 +22,17 @@ define projects::project::apache (
     include ::apache::mod::proxy_http
     include ::apache::mod::proxy_ajp
     include ::apache::mod::headers
-    include ::apache::mod::wsgi
     class {'::apache::mod::authnz_ldap':
       verifyServerCert => false
+    }
+
+    if $use_python3_wsgi {
+      package { 'mod_wsgi':
+        ensure => installed,
+        provider => 'pip3',
+      }
+    } else {
+      include ::apache::mod::wsgi
     }
 
     include ::apache::mod::status
