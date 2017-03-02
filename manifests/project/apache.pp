@@ -26,24 +26,6 @@ define projects::project::apache (
       verifyServerCert => false
     }
 
-    if $use_python3_wsgi {
-      package { 'mod_wsgi':
-        ensure => '4.5.14',
-        provider => 'pip3',
-        require => Package['httpd', 'httpd-devel'],
-      }
-      file { '/etc/httpd/conf.modules.d/wsgi3.load':
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        source  => 'puppet:///modules/projects/apache/wsgi3.conf',
-        require => Package['httpd'],
-      }
-    } else {
-      include ::apache::mod::wsgi
-    }
-
     include ::apache::mod::status
 
     if defined(Class['::selinux']) {
@@ -74,6 +56,23 @@ define projects::project::apache (
     include ::apache::mod::prefork
   }
 
+  if $apache_common['use_python3_wsgi'] {
+    package { 'mod_wsgi':
+      ensure => '4.5.14',
+      provider => 'pip3',
+      require => Package['httpd', 'httpd-devel'],
+    }
+    file { '/etc/httpd/conf.modules.d/wsgi3.load':
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      source  => 'puppet:///modules/projects/apache/wsgi3.conf',
+      require => Package['httpd'],
+    }
+  } else {
+    include ::apache::mod::wsgi
+  }
 
   file { "${::projects::basedir}/${title}/var/log/httpd":
     ensure  => directory,
