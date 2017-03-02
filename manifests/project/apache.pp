@@ -57,9 +57,10 @@ define projects::project::apache (
 
   if $apache_common['use_python3_wsgi'] {
     package { 'mod-wsgi':
-      ensure => '4.5.14',
+      ensure   => '4.5.14',
       provider => 'pip3',
-      require => Package['httpd', 'httpd-devel'],
+      require  => Package['httpd', 'httpd-devel'],
+      notify   => Service['httpd'],
     }
     file { '/etc/httpd/conf.modules.d/wsgi3.load':
       ensure  => file,
@@ -68,6 +69,7 @@ define projects::project::apache (
       mode    => '0644',
       source  => 'puppet:///modules/projects/apache/wsgi3.conf',
       require => Package['httpd'],
+      notify  => Service['httpd'],
     }
   } else {
     include ::apache::mod::wsgi
