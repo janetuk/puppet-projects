@@ -56,7 +56,7 @@ define projects::project::apache (
   }
 
   if $apache_common['use_python3_wsgi'] {
-    package { 'mod_wsgi':
+    package { 'mod-wsgi':
       ensure => '4.5.14',
       provider => 'pip3',
       require => Package['httpd', 'httpd-devel'],
