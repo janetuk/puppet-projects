@@ -5,7 +5,6 @@ define projects::project::apache (
   $vhosts           = {},
   $apache_user      = 'apache',
   $apache_common    = {},
-  $use_python3_wsgi = false,
 ) {
   if !defined(Class['::apache']) {
     ensure_resource('class', '::apache', {
