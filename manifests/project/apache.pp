@@ -51,6 +51,8 @@ define projects::project::apache (
 
   if $apache_common['mpm'] == 'event' {
     include ::apache::mod::event
+  } elsif $apache_common['mpm'] == 'worker' {
+    include ::apache::mod::worker
   } else {
     include ::apache::mod::prefork
   }
