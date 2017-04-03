@@ -92,7 +92,7 @@ define projects::project (
       ensure  => directory,
       owner   => $uid,
       group   => $gid,
-      mode    => '0750',
+      mode    => '0755',
       seltype => 'httpd_log_t',
     }
 
