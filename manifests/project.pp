@@ -30,7 +30,6 @@ define projects::project (
       members => $users,
     }
 
-    create_resources('@user', $users)
     project_user { $users:
       group => $title
     }
@@ -144,6 +143,7 @@ define projects::project (
 define project_user (
   $group = undef
 ) {
+  create_resources('@users', { $title => {} })
   User <| title == $title |> {
     groups +> $group,
   }
