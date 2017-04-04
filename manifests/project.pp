@@ -30,6 +30,7 @@ define projects::project (
       members => $users,
     }
 
+    create_resources('@user', $users)
     project_user { $users:
       group => $title
     }
