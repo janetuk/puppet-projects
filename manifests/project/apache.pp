@@ -181,7 +181,7 @@ define projects::project::apache::vhost (
     servername          => $vhost_name,
     port                => $port,
     ssl                 => $ssl,
-    docroot             => ${docroot},
+    docroot             => $docroot,
     logroot             => "${::projects::basedir}/${projectname}/var/log/httpd",
     use_optional_includes => "true",
     additional_includes =>
