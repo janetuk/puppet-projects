@@ -173,11 +173,15 @@ define projects::project::apache::vhost (
     require => File["${::projects::basedir}/${projectname}/etc/apache/conf.d"],
   }
 
+  if $docroot !~ /^\// {
+    $docroot = "${::projects::basedir}/${projectname}/var/${docroot}",
+  }
+
   ::apache::vhost { $title:
     servername          => $vhost_name,
     port                => $port,
     ssl                 => $ssl,
-    docroot             => "${::projects::basedir}/${projectname}/var/${docroot}",
+    docroot             => ${docroot},
     logroot             => "${::projects::basedir}/${projectname}/var/log/httpd",
     use_optional_includes => "true",
     additional_includes =>
