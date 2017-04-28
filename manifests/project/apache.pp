@@ -174,7 +174,7 @@ define projects::project::apache::vhost (
   }
 
   if $docroot !~ /^\// {
-    $docroot = "${::projects::basedir}/${projectname}/var/${docroot}",
+    $docroot = "${::projects::basedir}/${projectname}/var/${docroot}"
   }
 
   ::apache::vhost { $title:
