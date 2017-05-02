@@ -174,14 +174,14 @@ define projects::project::apache::vhost (
   }
 
   if $docroot !~ /^\// {
-    $docroot = "${::projects::basedir}/${projectname}/var/${docroot}"
+    $full_docroot = "${::projects::basedir}/${projectname}/var/${docroot}"
   }
 
   ::apache::vhost { $title:
     servername          => $vhost_name,
     port                => $port,
     ssl                 => $ssl,
-    docroot             => $docroot,
+    docroot             => $full_docroot,
     logroot             => "${::projects::basedir}/${projectname}/var/log/httpd",
     use_optional_includes => "true",
     additional_includes =>
