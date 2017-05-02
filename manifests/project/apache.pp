@@ -208,8 +208,8 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
     ::apache::listen { "$port":}
   }
 
-  if !defined(File[$docroot]) {
-    file { $docroot:
+  if !defined(File[$full_docroot]) {
+    file { $full_docroot:
       ensure  => directory,
       owner   => $apache_user,
       group   => $projectname,
