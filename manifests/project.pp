@@ -136,7 +136,8 @@ define projects::project (
   }
 
   sudo::conf { "${title}-reset-perms":
-    content => "%${title} ALL=(ALL) NOPASSWD: /usr/local/bin/reset-perms"
+    priority => 25,
+    content  => "%${title} ALL=(ALL) NOPASSWD: /usr/local/bin/reset-perms"
   }
 }
 
