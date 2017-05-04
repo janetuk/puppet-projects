@@ -176,6 +176,9 @@ define projects::project::apache::vhost (
   if $docroot !~ /^\// {
     $full_docroot = "${::projects::basedir}/${projectname}/var/${docroot}"
   }
+  else {
+    $full_docroot = $docroot
+  }
 
   ::apache::vhost { $title:
     servername          => $vhost_name,
