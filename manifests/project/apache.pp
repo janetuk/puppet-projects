@@ -222,7 +222,7 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
       ensure  => directory,
       owner   => $apache_user,
       group   => $projectname,
-      mode    => '0570',
+      mode    => '0750',
       seltype => 'httpd_sys_content_t',
     }
   }
