@@ -211,6 +211,7 @@ CustomLog \"${::projects::basedir}/${projectname}/var/log/httpd/${title}_access.
     add_listen => false,
     headers    => 'Set Strict-Transport-Security "max-age=63072000; includeSubdomains;"',
     rewrites   => $rewrites,
+    options    => ['FollowSymLinks', 'MultiViews']
   }
 
   if !defined(Apache::Listen["$port"]) {
